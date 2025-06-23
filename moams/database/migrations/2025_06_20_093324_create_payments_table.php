@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('minibus_owners', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
-            $table->string('district');
-            $table->string('village');
-            $table->string('national_id');
-            $table->string('num_of_vehicles');
+            $table->foreignId('membership_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
+            $table->string('purpose');
+            $table->string('method')->nullable();
+            $table->date('payment_date');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('minibus_owners');
+        Schema::dropIfExists('payments');
     }
 };

@@ -10,13 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('minibus_owners', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
+            $table->foreignId('minibus_owner_id')->unique()->constrained('minibus_owners')->onDelete('cascade');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone_number')->unique();
             $table->string('district');
-            $table->string('village');
-            $table->string('national_id');
-            $table->string('num_of_vehicles');
+            $table->string('driver_license')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('minibus_owners');
+        Schema::dropIfExists('drivers');
     }
 };

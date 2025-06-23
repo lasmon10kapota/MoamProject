@@ -37,6 +37,7 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'phone_number' => [
                 'required',
+                'unique:' . User::class,
                 'string',
                 function ($attribute, $value, $fail) {
                     if (!preg_match('/^(?:\+265|0)[89]\d{8}$/', $value)) {

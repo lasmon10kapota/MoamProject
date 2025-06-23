@@ -10,13 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('minibus_owners', function (Blueprint $table) {
+        Schema::create('complaints', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
-            $table->string('district');
-            $table->string('village');
-            $table->string('national_id');
-            $table->string('num_of_vehicles');
+            $table->foreignId('minibus_owner_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('description');
+            $table->enum('status', ['pending', 'responded'])->default('pending');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('minibus_owners');
+        Schema::dropIfExists('complaints');
     }
 };
