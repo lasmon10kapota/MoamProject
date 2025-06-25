@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('memberReg/registerOwner');
-})->name('memberReg/registerOwner');
+    return Inertia::render('welcome');
+})->name('welcome');
 
 Route::get('makePayment', function () {
     return Inertia::render('makePayment');

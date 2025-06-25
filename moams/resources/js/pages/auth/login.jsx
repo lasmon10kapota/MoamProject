@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
 import InputError from '@/components/input-error';
@@ -15,6 +15,11 @@ export default function Login({ status, canResetPassword }) {
         password: '',
         remember: false,
     });
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setData(id, value);
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -38,7 +43,7 @@ export default function Login({ status, canResetPassword }) {
                             tabIndex={1}
                             autoComplete="email"
                             value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
+                            onChange={handleChange}
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
@@ -54,7 +59,7 @@ export default function Login({ status, canResetPassword }) {
                             tabIndex={2}
                             autoComplete="current-password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={handleChange}
                             placeholder="Password"
                         />
                         <InputError message={errors.password} />
@@ -84,6 +89,10 @@ export default function Login({ status, canResetPassword }) {
             </form>
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            <div className="mt-4 text-center">
+                <span className="text-gray-600 dark:text-gray-300">Don't have an account? </span>
+                <Link href={route('register')} className="text-blue-600 hover:underline font-semibold">Sign up</Link>
+            </div>
         </AuthLayout>
     );
 }

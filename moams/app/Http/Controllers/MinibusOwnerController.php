@@ -44,7 +44,7 @@ class MinibusOwnerController extends Controller
             'num_of_vehicles' => $request->num_of_vehicles,
         ]);
 
-        to_route('registerOwner');
+        to_route('registerOwner')->with('message', 'Owener details saved successfully');
     }
 
     /**

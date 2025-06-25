@@ -6,6 +6,11 @@ import { Progress } from "@/components/ui/progress";
 
 export default function RegisterMinibus() {
 
+    const handleChange = (e) => {
+        const { id, value, type, files } = e.target;
+        setData(id, type === 'file' ? files[0] : value);
+    };
+
     return (
         <>
             <Head title="Tryit">
@@ -33,10 +38,9 @@ export default function RegisterMinibus() {
                                 autoFocus
                                 tabIndex={5}
                                 autoComplete="numberPlate"
-                                //value={data.email}
-                                //onChange={(e) => setData('phone', e.target.value)}
                                 placeholder="eg. DZ 4536"
                                 className='placeholder:text-gray-400 text-gray-300'
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
@@ -48,10 +52,9 @@ export default function RegisterMinibus() {
                                 autoFocus
                                 tabIndex={5}
                                 autoComplete="assignedRoute"
-                                //value={data.email}
-                                //onChange={(e) => setData('phone', e.target.value)}
                                 placeholder="eg. Mzomba-to-Blantyre"
                                 className='placeholder:text-gray-400 text-gray-300'
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
@@ -63,9 +66,8 @@ export default function RegisterMinibus() {
                                 autoFocus
                                 tabIndex={5}
                                 autoComplete="ownershipProof"
-                                //value={data.email}
-                                //onChange={(e) => setData('phone', e.target.value)}
                                 className='file:text-gray-400'
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="flex gap-2 items-center justify-between bg-gray-400 p-1 rounded-md">

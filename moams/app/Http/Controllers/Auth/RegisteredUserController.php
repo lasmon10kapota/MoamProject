@@ -15,6 +15,7 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    
     /**
      * Show the registration page.
      */
@@ -61,6 +62,6 @@ class RegisteredUserController extends Controller
 
         //Auth::login($user);
 
-        return to_route('register');
+        return to_route('register')->with('message', 'Account creation successful! You can now log in.');
     }
 }

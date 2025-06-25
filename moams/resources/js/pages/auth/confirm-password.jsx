@@ -21,6 +21,11 @@ export default function ConfirmPassword() {
         });
     };
 
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setData(id, value);
+    };
+
     return (
         <AuthLayout
             title="Confirm your password"
@@ -40,7 +45,7 @@ export default function ConfirmPassword() {
                             autoComplete="current-password"
                             value={data.password}
                             autoFocus
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={handleChange}
                         />
 
                         <InputError message={errors.password} />

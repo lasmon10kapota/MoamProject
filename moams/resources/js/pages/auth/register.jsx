@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
 import InputError from '@/components/input-error';
@@ -20,6 +20,17 @@ export default function Register() {
         password_confirmation: '',
     });
 
+    const { flash } = usePage().props;
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setData(id, value);
+    };
+
+    const handleGenderChange = (value) => {
+        setData('gender', value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
         post(route('register'), {
@@ -28,7 +39,15 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="">
+        <AuthLayout
+            title="Create an account"
+            description=""
+        >
+            {flash.message && (
+                <div className="mb-4 p-4 rounded bg-green-100 border border-green-400 text-green-800 text-center font-semibold">
+                    {flash.message}
+                </div>
+            )}
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
@@ -41,7 +60,7 @@ export default function Register() {
                             tabIndex={1}
                             autoComplete="first_name"
                             value={data.first_name}
-                            onChange={(e) => setData('first_name', e.target.value)}
+                            onChange={handleChange}
                             disabled={processing}
                             placeholder="First name"
                         />
@@ -56,14 +75,13 @@ export default function Register() {
                             tabIndex={2}
                             autoComplete="last_name"
                             value={data.last_name}
-                            onChange={(e) => setData('last_name', e.target.value)}
+                            onChange={handleChange}
                             disabled={processing}
                             placeholder="Last name"
                         />
                         <InputError message={errors.last_name} className="mt-2" />
                     </div>
-
-                    <div className="grid auto-rows-min gap-2 md:grid-cols-2">
+                    <div className="grid gap-2">
                         <Label htmlFor="gender">Gender</Label>
                         <Select
                             id="gender"
@@ -72,23 +90,21 @@ export default function Register() {
                             tabIndex={3}
                             autoComplete="gender"
                             value={data.gender}
-                            onValueChange={(value) => setData('gender', value)}
+                            onValueChange={handleGenderChange}
                             disabled={processing}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Male/Female" className="overflow-hidden" />
                             </SelectTrigger>
                             <SelectContent>
-                                < SelectGroup>
-                                    <SelectItem value="male" >Male</SelectItem>
+                                <SelectGroup>
+                                    <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                         <InputError message={errors.gender} />
                     </div>
-
-
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email address</Label>
                         <Input
@@ -97,13 +113,12 @@ export default function Register() {
                             tabIndex={4}
                             autoComplete="email"
                             value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
+                            onChange={handleChange}
                             disabled={processing}
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
                     </div>
-
                     <div className="grid gap-2">
                         <Label htmlFor="phone_number">Phone number</Label>
                         <Input
@@ -112,13 +127,12 @@ export default function Register() {
                             autoFocus
                             tabIndex={5}
                             autoComplete="phone_number"
-                            value={data.phone}
-                            onChange={(e) => setData('phone_number', e.target.value)}
+                            value={data.phone_number}
+                            onChange={handleChange}
                             placeholder="0889... or 0995... 0r +26599...."
                         />
                         <InputError message={errors.phone_number} />
                     </div>
-
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
@@ -127,13 +141,12 @@ export default function Register() {
                             tabIndex={5}
                             autoComplete="new-password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={handleChange}
                             disabled={processing}
                             placeholder="Password"
                         />
                         <InputError message={errors.password} />
                     </div>
-
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation">Confirm password</Label>
                         <Input
@@ -142,19 +155,22 @@ export default function Register() {
                             tabIndex={6}
                             autoComplete="new-password"
                             value={data.password_confirmation}
-                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            onChange={handleChange}
                             disabled={processing}
                             placeholder="Confirm password"
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
-
-                    <Button type="submit" className="mt-2 w-full bg-blue-400 hover:bg-blue-500" tabIndex={5} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Create account
-                    </Button>
                 </div>
+                <Button className="w-full bg-blue-400 hover:bg-blue-500 cursor-pointer" disabled={processing}>
+                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    Register
+                </Button>
             </form>
+            <div className="mt-4 text-center">
+                <span className="text-gray-600 dark:text-gray-300">Already have an account? </span>
+                <Link href={route('login')} className="text-blue-600 hover:underline font-semibold">Log in</Link>
+            </div>
         </AuthLayout>
     );
 }

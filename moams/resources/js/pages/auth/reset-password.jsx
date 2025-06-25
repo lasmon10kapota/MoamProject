@@ -15,6 +15,11 @@ export default function ResetPassword({ token, email }) {
         password_confirmation: '',
     });
 
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setData(id, value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
         post(route('password.store'), {
@@ -38,7 +43,7 @@ export default function ResetPassword({ token, email }) {
                             value={data.email}
                             className="mt-1 block w-full"
                             readOnly
-                            onChange={(e) => setData('email', e.target.value)}
+                            onChange={handleChange}
                         />
                         <InputError message={errors.email} className="mt-2" />
                     </div>
@@ -53,7 +58,7 @@ export default function ResetPassword({ token, email }) {
                             value={data.password}
                             className="mt-1 block w-full"
                             autoFocus
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={handleChange}
                             placeholder="Password"
                         />
                         <InputError message={errors.password} />
@@ -68,7 +73,7 @@ export default function ResetPassword({ token, email }) {
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             className="mt-1 block w-full"
-                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            onChange={handleChange}
                             placeholder="Confirm password"
                         />
                         <InputError message={errors.password_confirmation} className="mt-2" />

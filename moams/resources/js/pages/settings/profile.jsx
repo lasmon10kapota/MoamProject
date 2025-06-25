@@ -1,6 +1,4 @@
-import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
@@ -10,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import FlashMessage from '@/components/ui/flash-message';
 
 const breadcrumbs = [
     {
@@ -19,7 +18,7 @@ const breadcrumbs = [
 ];
 
 export default function Profile({ mustVerifyEmail, status }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         first_name: auth.user.first_name,
@@ -29,11 +28,20 @@ export default function Profile({ mustVerifyEmail, status }) {
         phone_number: auth.user.phone_number,
     });
 
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setData(id, value);
+    };
+
+    const handleGenderChange = (value) => {
+        setData('gender', value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
 
         patch(route('profile.update'), {
-            preserveScroll: true,
+            preserveScroll: false,
         });
     };
 
@@ -53,7 +61,7 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 id="first_name"
                                 className="mt-1 block w-full"
                                 value={data.first_name}
-                                onChange={(e) => setData('first_name', e.target.value)}
+                                onChange={handleChange}
                                 required
                                 autoComplete="first_name"
                                 placeholder="First name"
@@ -69,7 +77,7 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 id="last_name"
                                 className="mt-1 block w-full"
                                 value={data.last_name}
-                                onChange={(e) => setData('last_name', e.target.value)}
+                                onChange={handleChange}
                                 required
                                 autoComplete="last_name"
                                 placeholder="Last name"
@@ -86,7 +94,7 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 required
                                 autoComplete="gender"
                                 value={data.gender}
-                                onValueChange={(value) => setData('gender', value)}
+                                onValueChange={handleGenderChange}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Male/Female" className="overflow-hidden" />
@@ -101,7 +109,6 @@ export default function Profile({ mustVerifyEmail, status }) {
                             <InputError message={errors.gender} />
                         </div>
 
-
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email address</Label>
 
@@ -110,7 +117,7 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 type="email"
                                 className="mt-1 block w-full"
                                 value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
+                                onChange={handleChange}
                                 required
                                 autoComplete="username"
                                 placeholder="Email address"
@@ -128,7 +135,7 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 className="mt-1 block w-full"
                                 autoComplete="phone_number"
                                 value={data.phone_number}
-                                onChange={(e) => setData('phone_number', e.target.value)}
+                                onChange={handleChange}
                                 placeholder="0889... or 0995... 0r +26599...."
                             />
                             <InputError message={errors.phone_number} />
@@ -158,16 +165,7 @@ export default function Profile({ mustVerifyEmail, status }) {
 
                         <div className="flex items-center gap-4">
                             <Button disabled={processing} className='w-[25%] bg-[darkslateblue] hover:bg-[darkblue] cursor-pointer'>Save</Button>
-
-                            <Transition
-                                show={recentlySuccessful}
-                                enter="transition ease-in-out"
-                                enterFrom="opacity-0"
-                                leave="transition ease-in-out"
-                                leaveTo="opacity-0"
-                            >
-                                <p className="text-sm text-neutral-600">Saved</p>
-                            </Transition>
+                            <FlashMessage message={flash?.message} type="success" />
                         </div>
                     </form>
                 </div>

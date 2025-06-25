@@ -15,6 +15,11 @@ export default function registerOwner() {
         num_of_vehicles: '',
     });
 
+    const handleChange = (e) => {
+        const { id, value, type, files } = e.target;
+        setData(id, type === 'file' ? files[0] : value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
         post(route('registerOwner'));
@@ -50,7 +55,7 @@ export default function registerOwner() {
                                 tabIndex={2}
                                 autoComplete="district"
                                 value={data.district}
-                                onChange={(e) => setData('district', e.target.value)}
+                                onChange={handleChange}
                                 disabled={processing}
                                 placeholder="e.g. Ntcheu"
                                 className='placeholder:text-gray-400 text-gray-300'
@@ -66,7 +71,7 @@ export default function registerOwner() {
                                 tabIndex={2}
                                 autoComplete="village"
                                 value={data.village}
-                                onChange={(e) => setData('village', e.target.value)}
+                                onChange={handleChange}
                                 disabled={processing}
                                 placeholder="e.g. Muwalo"
                                 className='placeholder:text-gray-400 text-gray-300'
@@ -82,8 +87,7 @@ export default function registerOwner() {
                                 accept="image/*"
                                 autoFocus
                                 tabIndex={5}
-                                autoComplete="national_id"
-                                onChange={(e) => setData('national_id', e.target.files[0])}
+                                onChange={handleChange}
                                 disabled={processing}
                                 className='file:text-gray-400'
                             />
@@ -99,7 +103,7 @@ export default function registerOwner() {
                                 tabIndex={2}
                                 autoComplete="num_of_vehicles"
                                 value={data.num_of_vehicles}
-                                onChange={(e) => setData('num_of_vehicles', e.target.value)}
+                                onChange={handleChange}
                                 disabled={processing}
                                 placeholder="e.g. 3"
                                 className='placeholder:text-gray-400 text-gray-300'
