@@ -10,7 +10,6 @@ const breadcrumbs = [
 ];
 
 export default function Dashboard({ users }) {
-    console.log(users);
     return (
         <AppLayout breadcrumbs={breadcrumbs} >
             <Head title="Dashboard" />

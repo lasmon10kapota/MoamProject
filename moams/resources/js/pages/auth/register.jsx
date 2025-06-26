@@ -1,4 +1,4 @@
-import { Head, useForm, Link, usePage } from '@inertiajs/react';
+import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
 import InputError from '@/components/input-error';
@@ -18,9 +18,10 @@ export default function Register() {
         phone_number: '',
         password: '',
         password_confirmation: '',
+        role: '',
     });
 
-    const { flash } = usePage().props;
+    const { flash, roles, isAdmin } = usePage().props;
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -31,9 +32,17 @@ export default function Register() {
         setData('gender', value);
     };
 
+    const handleRoleChange = (value) => {
+        setData('role', value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
-        post(route('register'), {
+        console.log('Form submitted:', data);
+        console.log('Is admin:', isAdmin);
+        const submitUrl = isAdmin ? '/admin/create-user' : '/register';
+        console.log('Submitting to:', submitUrl);
+        post(submitUrl, {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -161,6 +170,29 @@ export default function Register() {
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
+                    {isAdmin && roles && roles.length > 0 && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="role">Role</Label>
+                            <Select
+                                id="role"
+                                value={data.role}
+                                onValueChange={handleRoleChange}
+                                disabled={processing}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select role" className="overflow-hidden" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {roles.map(role => (
+                                            <SelectItem key={role} value={role}>{role}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.role} />
+                        </div>
+                    )}
                 </div>
                 <Button className="w-full bg-blue-400 hover:bg-blue-500 cursor-pointer" disabled={processing}>
                     {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
