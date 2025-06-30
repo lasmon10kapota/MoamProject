@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 
-export default function RoleManagement() {
+export default function Complaints() {
     const { userRoles } = usePage().props;
 
     const breadcrumbs = [
@@ -11,24 +11,24 @@ export default function RoleManagement() {
             href: '/dashboard',
         },
         {
-            title: 'Role Management',
-            href: '/roles',
+            title: 'Complaint Management',
+            href: '/complaints',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Role Management" />
+            <Head title="Complaint Management" />
 
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center py-12">
                         <div className="mb-6">
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                                Role Management
+                                Complaint Management
                             </h1>
                             <p className="text-xl text-gray-600 dark:text-gray-400">
-                                Role management is under development.
+                                Complaint management is under development.
                             </p>
                         </div>
 
@@ -39,33 +39,41 @@ export default function RoleManagement() {
                             <ul className="text-left space-y-3 text-gray-600 dark:text-gray-400">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Create and manage system roles (System Admin, Association Manager, etc.)
+                                    Submit and track complaints
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Assign permissions to roles
+                                    Complaint categorization and prioritization
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role hierarchy and inheritance
+                                    Complaint status tracking (Open, In Progress, Resolved, Closed)
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Bulk role assignments
+                                    Response management and communication
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role-based access control (RBAC) configuration
+                                    Escalation procedures
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role audit logs and history
+                                    Complaint analytics and reporting
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-blue-600 mr-2">•</span>
+                                    SLA monitoring and alerts
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-blue-600 mr-2">•</span>
+                                    Complaint history and audit trails
                                 </li>
                             </ul>
                         </div>
 
                         <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-                            This module will provide comprehensive role management capabilities for the MOAM system.
+                            This module will provide comprehensive complaint management capabilities for the MOAM system.
                         </div>
                     </div>
                 </div>

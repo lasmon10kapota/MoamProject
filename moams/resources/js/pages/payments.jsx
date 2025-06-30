@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 
-export default function RoleManagement() {
+export default function Payments() {
     const { userRoles } = usePage().props;
 
     const breadcrumbs = [
@@ -11,24 +11,24 @@ export default function RoleManagement() {
             href: '/dashboard',
         },
         {
-            title: 'Role Management',
-            href: '/roles',
+            title: 'Payment Management',
+            href: '/payments',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Role Management" />
+            <Head title="Payment Management" />
 
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center py-12">
                         <div className="mb-6">
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                                Role Management
+                                Payment Management
                             </h1>
                             <p className="text-xl text-gray-600 dark:text-gray-400">
-                                Role management is under development.
+                                Payment management is under development.
                             </p>
                         </div>
 
@@ -39,33 +39,41 @@ export default function RoleManagement() {
                             <ul className="text-left space-y-3 text-gray-600 dark:text-gray-400">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Create and manage system roles (System Admin, Association Manager, etc.)
+                                    Membership fee collection and tracking
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Assign permissions to roles
+                                    Multiple payment methods (Cash, Mobile Money, Bank Transfer)
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role hierarchy and inheritance
+                                    Payment history and receipts
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Bulk role assignments
+                                    Outstanding balance tracking
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role-based access control (RBAC) configuration
+                                    Payment reminders and notifications
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role audit logs and history
+                                    Financial reports and analytics
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-blue-600 mr-2">•</span>
+                                    Payment reconciliation
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-blue-600 mr-2">•</span>
+                                    Bulk payment processing
                                 </li>
                             </ul>
                         </div>
 
                         <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-                            This module will provide comprehensive role management capabilities for the MOAM system.
+                            This module will provide comprehensive payment management capabilities for the MOAM system.
                         </div>
                     </div>
                 </div>

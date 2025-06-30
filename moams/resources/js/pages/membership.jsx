@@ -2,7 +2,7 @@ import { usePage } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 
-export default function RoleManagement() {
+export default function Membership() {
     const { userRoles } = usePage().props;
 
     const breadcrumbs = [
@@ -11,24 +11,24 @@ export default function RoleManagement() {
             href: '/dashboard',
         },
         {
-            title: 'Role Management',
-            href: '/roles',
+            title: 'Membership Management',
+            href: '/membership',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Role Management" />
+            <Head title="Membership Management" />
 
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center py-12">
                         <div className="mb-6">
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                                Role Management
+                                Membership Management
                             </h1>
                             <p className="text-xl text-gray-600 dark:text-gray-400">
-                                Role management is under development.
+                                Membership management is under development.
                             </p>
                         </div>
 
@@ -39,33 +39,37 @@ export default function RoleManagement() {
                             <ul className="text-left space-y-3 text-gray-600 dark:text-gray-400">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Create and manage system roles (System Admin, Association Manager, etc.)
+                                    Member registration and onboarding
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Assign permissions to roles
+                                    Membership status tracking (Active, Inactive, Suspended)
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role hierarchy and inheritance
+                                    Member profile management
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Bulk role assignments
+                                    Membership renewal and expiration tracking
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role-based access control (RBAC) configuration
+                                    Member categories and classifications
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Role audit logs and history
+                                    Membership statistics and reports
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-blue-600 mr-2">•</span>
+                                    Bulk membership operations
                                 </li>
                             </ul>
                         </div>
 
                         <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-                            This module will provide comprehensive role management capabilities for the MOAM system.
+                            This module will provide comprehensive membership management capabilities for the MOAM system.
                         </div>
                     </div>
                 </div>
