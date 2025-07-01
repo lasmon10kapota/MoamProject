@@ -26,6 +26,9 @@ export default function Profile({ mustVerifyEmail, status }) {
         gender: auth.user.gender,
         email: auth.user.email,
         phone_number: auth.user.phone_number,
+
+        district: auth.user.district || '',
+        village: auth.user.village || '',
     });
 
     const handleChange = (e) => {
@@ -36,6 +39,8 @@ export default function Profile({ mustVerifyEmail, status }) {
     const handleGenderChange = (value) => {
         setData('gender', value);
     };
+
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -56,7 +61,6 @@ export default function Profile({ mustVerifyEmail, status }) {
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
                             <Label htmlFor="first_name">First name</Label>
-
                             <Input
                                 id="first_name"
                                 className="mt-1 block w-full"
@@ -66,13 +70,10 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 autoComplete="first_name"
                                 placeholder="First name"
                             />
-
                             <InputError className="mt-2" message={errors.first_name} />
                         </div>
-
                         <div className="grid gap-2">
                             <Label htmlFor="last_name">Last name</Label>
-
                             <Input
                                 id="last_name"
                                 className="mt-1 block w-full"
@@ -82,10 +83,8 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 autoComplete="last_name"
                                 placeholder="Last name"
                             />
-
                             <InputError className="mt-2" message={errors.last_name} />
                         </div>
-
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
                             <Label htmlFor="gender">Gender</Label>
                             <Select
@@ -100,8 +99,8 @@ export default function Profile({ mustVerifyEmail, status }) {
                                     <SelectValue placeholder="Male/Female" className="overflow-hidden" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    < SelectGroup>
-                                        <SelectItem value="male" >Male</SelectItem>
+                                    <SelectGroup>
+                                        <SelectItem value="male">Male</SelectItem>
                                         <SelectItem value="female">Female</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
@@ -109,9 +108,36 @@ export default function Profile({ mustVerifyEmail, status }) {
                             <InputError message={errors.gender} />
                         </div>
 
+                        {/* District */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="district" className="text-gray-700">District</Label>
+                            <Input
+                                id="district"
+                                className="mt-1 block w-full"
+                                value={data.district}
+                                onChange={handleChange}
+                                required
+                                autoComplete="district"
+                                placeholder="District"
+                            />
+                            <InputError className="mt-2" message={errors.district} />
+                        </div>
+                        {/* Village */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="village" className="text-gray-700">Village/Town</Label>
+                            <Input
+                                id="village"
+                                className="mt-1 block w-full"
+                                value={data.village}
+                                onChange={handleChange}
+                                required
+                                autoComplete="village"
+                                placeholder="Village/Town"
+                            />
+                            <InputError className="mt-2" message={errors.village} />
+                        </div>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email address</Label>
-
                             <Input
                                 id="email"
                                 type="email"
@@ -122,10 +148,8 @@ export default function Profile({ mustVerifyEmail, status }) {
                                 autoComplete="username"
                                 placeholder="Email address"
                             />
-
                             <InputError className="mt-2" message={errors.email} />
                         </div>
-
                         <div className="grid gap-2">
                             <Label htmlFor="phone_number">Phone number</Label>
                             <Input
@@ -165,12 +189,21 @@ export default function Profile({ mustVerifyEmail, status }) {
 
                         <div className="flex items-center gap-4">
                             <Button disabled={processing} className='w-[25%] bg-[darkslateblue] hover:bg-[darkblue] cursor-pointer'>Save</Button>
-                            <FlashMessage message={flash?.message} type="success" />
+                            {flash?.message && <FlashMessage message={flash.message} type="success" />}
+                            {flash?.info && <FlashMessage message={flash.info} type="info" />}
                         </div>
                     </form>
                 </div>
 
-                <DeleteUser />
+                {/* Commitment Statement (uneditable) */}
+                {auth.user.commitment && (
+                    <div className="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200">
+                        <Label className="text-sm font-medium text-gray-600">Commitment Statement</Label>
+                        <p className="text-sm mt-1 whitespace-pre-line">{auth.user.commitment}</p>
+                    </div>
+                )}
+
+                {/* <DeleteUser /> */}
             </SettingsLayout>
         </AppLayout>
     );

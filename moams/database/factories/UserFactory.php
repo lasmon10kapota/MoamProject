@@ -28,7 +28,11 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName,
             'gender' => $this->faker->randomElement(['male', 'female']),
             'email' => $this->faker->unique()->safeEmail,
-            'phone_number' => $this->faker->phoneNumber,
+            'phone_number' => $this->faker->numerify('09########'),
+            'district' => $this->faker->city,
+            'village' => $this->faker->streetName,
+
+            'commitment' => $this->faker->boolean(50) ? 'I commit to abide by the Constitution, rules, and regulations of the Minibus Owners Association of Malawi (MOAM), and to uphold the values and objectives of the Association at all times.' : null,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

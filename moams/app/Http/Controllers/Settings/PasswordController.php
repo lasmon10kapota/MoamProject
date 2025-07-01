@@ -21,6 +21,7 @@ class PasswordController extends Controller
         return Inertia::render('settings/password', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'userRoles' => $request->user() ? $request->user()->roles->pluck('name')->toArray() : [],
         ]);
     }
 

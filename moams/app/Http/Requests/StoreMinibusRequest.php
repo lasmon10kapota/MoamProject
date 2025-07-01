@@ -11,7 +11,7 @@ class StoreMinibusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreMinibusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'number_plate' => 'required|string|max:20',
+            'assigned_route' => 'required|string|max:255',
         ];
     }
 }

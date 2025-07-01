@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 
@@ -23,9 +23,13 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'gender',
+
+        'district',
+        'village',
         'email',
         'phone_number',
         'password',
+        'commitment',
     ];
 
     /**
@@ -48,11 +52,49 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'archived_at' => 'datetime',
         ];
     }
 
-    public function MinibusOwner(): HasOne
+    public function complaints(): HasMany
     {
-        return $this->hasOne(MinibusOwner::class);
+        return $this->hasMany(Complaint::class);
+    }
+
+    public function minibuses(): HasMany
+    {
+        return $this->hasMany(Minibus::class);
+    }
+
+    public function drivers(): HasMany
+    {
+        return $this->hasMany(Driver::class);
+    }
+
+    public function offenses(): HasMany
+    {
+        return $this->hasMany(Offense::class);
+    }
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class, 'user_id');
+    }
+
+    public function scopeNotArchived($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function archive()
+    {
+        $this->archived_at = now();
+        $this->save();
+    }
+
+    public function unarchive()
+    {
+        $this->archived_at = null;
+        $this->save();
     }
 }

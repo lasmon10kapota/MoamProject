@@ -21,6 +21,7 @@ class ProfileController extends Controller
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'userRoles' => $request->user() ? $request->user()->roles->pluck('name')->toArray() : [],
         ]);
     }
 
@@ -31,13 +32,13 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $user->fill($request->validated());
-    
+
         $wasChanged = $user->isDirty();
-    
+
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
-    
+
         if ($wasChanged) {
             $user->save();
             return to_route('profile.edit')->with([

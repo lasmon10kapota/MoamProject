@@ -21,8 +21,8 @@ class Payment extends Model
         'payment_date' => 'datetime',
     ];
 
-    public function membership(): BelongsTo
+    public function membership()
     {
-        return $this->belongsTo(Membership::class, 'membership_id');
+        return $this->belongsTo(Membership::class);
     }
 }

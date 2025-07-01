@@ -29,7 +29,12 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
-        //
+        Payment::create([
+            'amount' => $request->amount,
+            'purpose' => $request->purpose,
+            'method' => 'manual', // or get from request if you have a method field
+        ]);
+        return redirect()->back()->with('message', 'Payment saved successfully!');
     }
 
     /**

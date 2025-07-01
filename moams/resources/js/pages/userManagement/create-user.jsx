@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
 import { LoaderCircle, ArrowLeft } from 'lucide-react';
 
@@ -8,20 +9,29 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import FlashMessage from '@/components/ui/flash-message';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function AddUser() {
     const { data, setData, post, processing, errors, reset } = useForm({
         first_name: '',
         last_name: '',
         gender: '',
+
+        district: '',
+        village: '',
         email: '',
         phone_number: '',
         password: '',
         password_confirmation: '',
         role: '',
+        commitment: false,
     });
 
     const { flash, roles } = usePage().props;
+    const [showCommitmentError, setShowCommitmentError] = useState(false);
+
+    if (!roles || !Array.isArray(roles) || roles.length === 0) return <div>Loading...</div>;
 
     const breadcrumbs = [
         {
@@ -39,8 +49,13 @@ export default function AddUser() {
     ];
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
-        setData(id, value);
+        const { id, value, type, files, checked } = e.target;
+        if (type === 'checkbox') {
+            setData(id, checked);
+            if (id === 'commitment') setShowCommitmentError(false);
+        } else {
+            setData(id, type === 'file' ? files[0] : value);
+        }
     };
 
     const handleGenderChange = (value) => {
@@ -51,8 +66,18 @@ export default function AddUser() {
         setData('role', value);
     };
 
+    const handleCommitmentChange = (checked) => {
+        setData('commitment', checked);
+        setShowCommitmentError(false);
+    };
+
     const submit = (e) => {
         e.preventDefault();
+        if (!data.commitment) {
+            setShowCommitmentError(true);
+            return;
+        }
+        setShowCommitmentError(false);
         post('/admin/create-user', {
             onFinish: () => reset('password', 'password_confirmation'),
         });
@@ -60,11 +85,7 @@ export default function AddUser() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            {flash.message && (
-                <div className="mb-4 p-4 rounded bg-green-100 border border-green-400 text-green-800 text-center font-semibold">
-                    {flash.message}
-                </div>
-            )}
+            {flash.message && <FlashMessage message={flash.message} type="success" />}
             <Head title="Create User" />
 
             <div className="p-8">
@@ -126,7 +147,6 @@ export default function AddUser() {
                                 id="gender"
                                 type="text"
                                 autoFocus
-                                tabIndex={3}
                                 autoComplete="gender"
                                 value={data.gender}
                                 onValueChange={handleGenderChange}
@@ -143,6 +163,38 @@ export default function AddUser() {
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.gender} className="mt-2" />
+                        </div>
+
+
+                        {/* District */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="district" className="text-gray-700">District</Label>
+                            <Input
+                                id="district"
+                                type="text"
+                                autoComplete="district"
+                                value={data.district}
+                                onChange={handleChange}
+                                disabled={processing}
+                                placeholder="e.g. Ntcheu"
+                                className="placeholder:text-gray-400 text-gray-900 mt-1"
+                            />
+                            <InputError message={errors.district} className="mt-2" />
+                        </div>
+                        {/* Village */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="village" className="text-gray-700">Village/Town</Label>
+                            <Input
+                                id="village"
+                                type="text"
+                                autoComplete="village"
+                                value={data.village}
+                                onChange={handleChange}
+                                disabled={processing}
+                                placeholder="e.g. Muwalo"
+                                className="placeholder:text-gray-400 text-gray-900 mt-1"
+                            />
+                            <InputError message={errors.village} className="mt-2" />
                         </div>
 
                         <div>
@@ -225,6 +277,30 @@ export default function AddUser() {
                             </Select>
                             <InputError message={errors.role} className="mt-2" />
                         </div>
+
+                        {/* Commitment Statement (only for minibus owner) */}
+                        {data.role === 'minibus owner' && (
+                            <div className="flex flex-col my-2 space-y-2 p-4 bg-gray-50 rounded-md border border-gray-200">
+                                <span className="text-gray-800 font-semibold text-base">Commitment Statement</span>
+                                <span className="text-gray-600 text-sm">
+                                    I commit to abide by the Constitution, rules, and regulations of the Minibus Owners Association of Malawi (MOAM), and to uphold the values and objectives of the Association at all times.
+                                </span>
+                                <div className="flex items-center space-x-3 mt-2">
+                                    <Checkbox
+                                        id="commitment"
+                                        name="commitment"
+                                        checked={!!data.commitment}
+                                        onCheckedChange={handleCommitmentChange}
+                                        disabled={processing}
+                                        className="h-5 w-5"
+                                    />
+                                    <Label htmlFor="commitment" className="text-gray-700 text-sm">I have read and agree to the above commitment statement.</Label>
+                                </div>
+                                {showCommitmentError && (
+                                    <InputError message="You must agree to the commitment statement to proceed." className="mt-2" />
+                                )}
+                            </div>
+                        )}
 
                         <div className="flex space-x-4 pt-6">
                             <Button

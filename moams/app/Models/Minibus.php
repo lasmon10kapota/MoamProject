@@ -19,6 +19,6 @@ class Minibus extends Model
 
     public function minibusOwner(): BelongsTo
     {
-        return $this->belongsTo(MinibusOwner::class, 'minibus_owner_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -29,7 +29,21 @@ class DriverController extends Controller
      */
     public function store(StoreDriverRequest $request)
     {
-        //
+        $user = auth()->user();
+        $path = null;
+        if ($request->hasFile('driver_license')) {
+            $path = $request->file('driver_license')->store('DriverLicenseUploads', 'public');
+        }
+        $driver = $user->drivers()->create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+            'district' => $request->district,
+            'driver_license' => $path,
+        ]);
+        $user->registration_step = 'review';
+        $user->save();
+        return to_route('reviewRegInfor')->with('message', 'Driver details saved successfully');
     }
 
     /**

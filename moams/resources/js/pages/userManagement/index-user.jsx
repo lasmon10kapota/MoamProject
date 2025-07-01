@@ -1,5 +1,5 @@
 import { Head, Link, usePage, router } from '@inertiajs/react';
-import { Plus, Eye, Edit, Trash2, Search, Filter, ChevronRight, Home, ChevronDown } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Search, Filter, ChevronRight, Home, ChevronDown, Archive, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,13 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarInitials } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
+import FlashMessage from '@/components/ui/flash-message';
 
 export default function UserManagement() {
     const { users, flash } = usePage().props;
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
+    const [statusFilter, setStatusFilter] = useState('active');
     const [displayCount, setDisplayCount] = useState(6);
 
     const breadcrumbs = [
@@ -29,7 +31,7 @@ export default function UserManagement() {
         },
     ];
 
-    // Filter users based on search term and role filter
+    // Filter users based on search term, role filter, and status filter
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,8 +39,12 @@ export default function UserManagement() {
             user.phone_number.includes(searchTerm);
 
         const matchesRole = roleFilter === 'all' || user.roles.some(role => role.name === roleFilter);
+        const matchesStatus =
+            statusFilter === 'all' ? true :
+                statusFilter === 'active' ? !user.archived_at :
+                    !!user.archived_at;
 
-        return matchesSearch && matchesRole;
+        return matchesSearch && matchesRole && matchesStatus;
     }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by newest first
 
     // Get users to display based on current display count
@@ -53,9 +59,7 @@ export default function UserManagement() {
         switch (roleName) {
             case 'system admin':
                 return 'bg-red-100 text-red-800 border-red-200';
-            case 'registering member':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'registered member':
+            case 'minibus owner':
                 return 'bg-green-100 text-green-800 border-green-200';
             case 'association clerk':
                 return 'bg-purple-100 text-purple-800 border-purple-200';
@@ -95,16 +99,8 @@ export default function UserManagement() {
                 </div>
 
                 {/* Flash Messages */}
-                {flash.message && (
-                    <div className="mb-6 p-4 rounded-lg bg-green-100 border border-green-400 text-green-800">
-                        {flash.message}
-                    </div>
-                )}
-                {flash.error && (
-                    <div className="mb-6 p-4 rounded-lg bg-red-100 border border-red-400 text-red-800">
-                        {flash.error}
-                    </div>
-                )}
+                {flash.message && <FlashMessage message={flash.message} type="success" />}
+                {flash.error && <FlashMessage message={flash.error} type="error" />}
 
                 {/* Statistics */}
                 <Card className="mb-6">
@@ -112,22 +108,16 @@ export default function UserManagement() {
                         <CardTitle>User Statistics</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-gray-600">{users.length}</div>
+                                <div className="text-2xl font-bold text-blue-600">{users.length}</div>
                                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Users</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-blue-600">
-                                    {users.filter(u => u.roles.some(r => r.name === 'registering member')).length}
-                                </div>
-                                <div className="text-sm text-gray-600 dark:text-gray-400">Registering Members</div>
-                            </div>
-                            <div className="text-center">
                                 <div className="text-2xl font-bold text-green-600">
-                                    {users.filter(u => u.roles.some(r => r.name === 'registered member')).length}
+                                    {users.filter(u => u.roles.some(r => r.name === 'minibus owner')).length}
                                 </div>
-                                <div className="text-sm text-gray-600 dark:text-gray-400">Registered Members</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">Minibus Owners</div>
                             </div>
                             <div className="text-center">
                                 <div className="text-2xl font-bold text-purple-600">
@@ -151,7 +141,7 @@ export default function UserManagement() {
                         <CardTitle className="text-lg">Filters & Search</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div>
                                 <Label htmlFor="search">Search Users</Label>
                                 <div className="relative">
@@ -175,10 +165,24 @@ export default function UserManagement() {
                                         <SelectGroup>
                                             <SelectItem value="all">All Roles</SelectItem>
                                             <SelectItem value="system admin">System Admin</SelectItem>
-                                            <SelectItem value="registering member">Registering Member</SelectItem>
-                                            <SelectItem value="registered member">Registered Member</SelectItem>
+                                            <SelectItem value="minibus owner">Minibus Owner</SelectItem>
                                             <SelectItem value="association clerk">Association Clerk</SelectItem>
                                             <SelectItem value="association manager">Association Manager</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label htmlFor="status-filter">Account Status</Label>
+                                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Active" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="active">Active</SelectItem>
+                                            <SelectItem value="inactive">Inactive</SelectItem>
+                                            <SelectItem value="all">All</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -189,6 +193,7 @@ export default function UserManagement() {
                                     onClick={() => {
                                         setSearchTerm('');
                                         setRoleFilter('all');
+                                        setStatusFilter('active');
                                         setDisplayCount(6);
                                     }}
                                     className="w-full"
@@ -224,6 +229,9 @@ export default function UserManagement() {
                                             </CardDescription>
                                         </div>
                                     </div>
+                                    {user.archived_at && (
+                                        <Badge variant="destructive" className="ml-2">Archived</Badge>
+                                    )}
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-3">
@@ -239,7 +247,7 @@ export default function UserManagement() {
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600 dark:text-gray-400">
-                                            {user.roles.some(role => role.name === 'registered member')
+                                            {user.roles.some(role => role.name === 'minibus owner')
                                                 ? 'Joined:'
                                                 : 'Signed up:'
                                             }
@@ -272,7 +280,6 @@ export default function UserManagement() {
                                                 <TooltipTrigger asChild>
                                                     <Button variant="outline" size="sm" className="w-full">
                                                         <Eye className="h-3 w-3 sm:mr-1" />
-                                                        <span className="hidden sm:inline">View</span>
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
@@ -286,7 +293,6 @@ export default function UserManagement() {
                                                 <TooltipTrigger asChild>
                                                     <Button variant="outline" size="sm" className="w-full">
                                                         <Edit className="h-3 w-3 sm:mr-1" />
-                                                        <span className="hidden sm:inline">Edit</span>
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
@@ -298,18 +304,43 @@ export default function UserManagement() {
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <Button
+                                                    variant={user.archived_at ? 'success' : 'outline'}
+                                                    size="sm"
+                                                    className="flex-1 min-w-0"
+                                                    onClick={() => {
+                                                        const action = user.archived_at ? 'unarchive' : 'archive';
+                                                        const confirmMessage = user.archived_at
+                                                            ? `Are you sure you want to unarchive ${user.first_name} ${user.last_name}?`
+                                                            : `Are you sure you want to archive ${user.first_name} ${user.last_name}?`;
+                                                        if (confirm(confirmMessage)) {
+                                                            router.put(`/admin/users/${user.id}/${action}`);
+                                                        }
+                                                    }}
+                                                >
+                                                    {user.archived_at ? <RotateCcw className="h-3 w-3 sm:mr-1" /> : <Archive className="h-3 w-3 sm:mr-1" />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{user.archived_at ? 'Unarchive user' : 'Archive user'}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="flex-1 min-w-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    className={`flex-1 min-w-0 ${user.archived_at ? 'text-gray-400 cursor-not-allowed' : 'text-red-600 hover:text-red-700 hover:bg-red-50'}`}
                                                     onClick={() => {
+                                                        if (user.archived_at) return;
                                                         const confirmMessage = `Are you sure you want to delete ${user.first_name} ${user.last_name}?\n\nThis action cannot be undone and will permanently remove the user from the system.`;
                                                         if (confirm(confirmMessage)) {
                                                             router.delete(`/admin/users/${user.id}`);
                                                         }
                                                     }}
+                                                    disabled={!!user.archived_at}
                                                 >
                                                     <Trash2 className="h-3 w-3 sm:mr-1" />
-                                                    <span className="hidden sm:inline">Delete</span>
                                                 </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
@@ -360,7 +391,7 @@ export default function UserManagement() {
                                         : 'No users have been created yet'
                                     }
                                 </p>
-                                {!searchTerm && roleFilter === 'all' && (
+                                {!searchTerm && roleFilter === 'all' && statusFilter === 'active' && (
                                     <Link href="/admin/create-user">
                                         <Button>
                                             <Plus className="h-4 w-4 mr-2" />

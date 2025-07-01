@@ -12,10 +12,9 @@ return new class extends Migration {
     {
         Schema::create('minibuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('minibus_owner_id')->unique()->constrained('minibus_owners')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('number_plate');
             $table->string('assigned_route');
-            $table->string('proof_of_ownership');
             $table->timestamps();
         });
     }

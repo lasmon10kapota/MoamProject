@@ -1,5 +1,5 @@
 import { Head, Link, usePage, router } from '@inertiajs/react';
-import { ArrowLeft, Edit, Trash2, Mail, Phone, Calendar, User, Shield, ChevronRight, Home } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Mail, Phone, Calendar, User, Shield, ChevronRight, Home, Archive, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarInitials } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
+import FlashMessage from '@/components/ui/flash-message';
 
 export default function UserDetail() {
     const { user, flash } = usePage().props;
@@ -32,9 +33,7 @@ export default function UserDetail() {
         switch (roleName) {
             case 'system admin':
                 return 'bg-red-100 text-red-800 border-red-200';
-            case 'registering member':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'registered member':
+            case 'minibus owner':
                 return 'bg-green-100 text-green-800 border-green-200';
             case 'association clerk':
                 return 'bg-purple-100 text-purple-800 border-purple-200';
@@ -66,7 +65,6 @@ export default function UserDetail() {
                         <Link href="/admin/users">
                             <Button variant="outline" size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2" />
-                                Back to Users
                             </Button>
                         </Link>
                     </div>
@@ -77,7 +75,6 @@ export default function UserDetail() {
                                     <Link href={`/admin/users/${user.id}/edit`}>
                                         <Button className="bg-green-600 hover:bg-green-700">
                                             <Edit className="h-4 w-4 sm:mr-2" />
-                                            <span className="hidden sm:inline">Edit User</span>
                                         </Button>
                                     </Link>
                                 </TooltipTrigger>
@@ -89,17 +86,41 @@ export default function UserDetail() {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
-                                        variant="outline"
-                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                        variant={user.archived_at ? 'success' : 'outline'}
+                                        className="ml-2"
                                         onClick={() => {
+                                            const action = user.archived_at ? 'unarchive' : 'archive';
+                                            const confirmMessage = user.archived_at
+                                                ? `Are you sure you want to unarchive ${user.first_name} ${user.last_name}?`
+                                                : `Are you sure you want to archive ${user.first_name} ${user.last_name}?`;
+                                            if (confirm(confirmMessage)) {
+                                                router.put(`/admin/users/${user.id}/${action}`);
+                                            }
+                                        }}
+                                    >
+                                        {user.archived_at ? <RotateCcw className="h-4 w-4 sm:mr-2" /> : <Archive className="h-4 w-4 sm:mr-2" />}
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{user.archived_at ? 'Unarchive user' : 'Archive user'}</p>
+                                </TooltipContent>
+                            </Tooltip>
+
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${user.archived_at ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                                        onClick={() => {
+                                            if (user.archived_at) return;
                                             const confirmMessage = `Are you sure you want to delete ${user.first_name} ${user.last_name}?\n\nThis action cannot be undone and will permanently remove the user from the system.`;
                                             if (confirm(confirmMessage)) {
                                                 router.delete(`/admin/users/${user.id}`);
                                             }
                                         }}
+                                        disabled={!!user.archived_at}
                                     >
                                         <Trash2 className="h-4 w-4 sm:mr-2" />
-                                        <span className="hidden sm:inline">Delete</span>
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -111,16 +132,8 @@ export default function UserDetail() {
                 </div>
 
                 {/* Flash Messages */}
-                {flash.message && (
-                    <div className="mb-6 p-4 rounded-lg bg-green-100 border border-green-400 text-green-800">
-                        {flash.message}
-                    </div>
-                )}
-                {flash.error && (
-                    <div className="mb-6 p-4 rounded-lg bg-red-100 border border-red-400 text-red-800">
-                        {flash.error}
-                    </div>
-                )}
+                {flash.message && <FlashMessage message={flash.message} type="success" />}
+                {flash.error && <FlashMessage message={flash.error} type="error" />}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* User Profile Card */}
@@ -158,14 +171,25 @@ export default function UserDetail() {
                                     <span className="text-sm capitalize">{user.gender}</span>
                                 </div>
                                 <div className="flex items-center space-x-3">
+                                    <Home className="h-4 w-4 text-gray-500" />
+                                    <span className="text-sm">{user.district}</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                    <Home className="h-4 w-4 text-gray-500" />
+                                    <span className="text-sm">{user.village}</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
                                     <Calendar className="h-4 w-4 text-gray-500" />
                                     <span className="text-sm">
-                                        {user.roles.some(role => role.name === 'registered member')
+                                        {user.roles.some(role => role.name === 'minibus owner')
                                             ? `Joined ${formatDate(user.created_at)}`
                                             : `Signed up ${formatDate(user.created_at)}`
                                         }
                                     </span>
                                 </div>
+                                {user.archived_at && (
+                                    <Badge variant="destructive" className="ml-2">Archived</Badge>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
@@ -225,14 +249,16 @@ export default function UserDetail() {
                                     <div>
                                         <Label className="text-sm font-medium text-gray-600">Account Status</Label>
                                         <p className="text-sm mt-1">
-                                            <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
-                                                Active
-                                            </Badge>
+                                            {user.archived_at ? (
+                                                <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-200">Inactive</Badge>
+                                            ) : (
+                                                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Active</Badge>
+                                            )}
                                         </p>
                                     </div>
                                     <div>
                                         <Label className="text-sm font-medium text-gray-600">
-                                            {user.roles.some(role => role.name === 'registered member')
+                                            {user.roles.some(role => role.name === 'minibus owner')
                                                 ? 'Member Since'
                                                 : 'Account Created'
                                             }
@@ -242,6 +268,18 @@ export default function UserDetail() {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        {/* Commitment Statement Section */}
+                        {user.roles.some(role => role.name === 'minibus owner') && user.commitment && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Commitment Statement</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm whitespace-pre-line">{user.commitment}</p>
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
                 </div>
             </div>

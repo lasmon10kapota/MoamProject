@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Membership extends Model
 {
@@ -17,13 +18,13 @@ class Membership extends Model
         'end_date' => 'date',
     ];
 
-    public function minibusOwner(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(MinibusOwner::class, 'minibus_owner_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function payment(): HasOne
+    public function payments()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasMany(Payment::class);
     }
 }

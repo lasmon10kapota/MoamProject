@@ -32,6 +32,12 @@ export default function Login({ status, canResetPassword }) {
         <AuthLayout title="Log in to your account" description="">
             <Head title="Log in" />
 
+            {errors.email && (
+                <div className="mb-4 text-center text-sm font-medium text-red-600">
+                    {errors.email}
+                </div>
+            )}
+
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
@@ -46,7 +52,7 @@ export default function Login({ status, canResetPassword }) {
                             onChange={handleChange}
                             placeholder="email@example.com"
                         />
-                        <InputError message={errors.email} />
+                        <InputError message={errors.email && !errors.password ? '' : errors.email} />
                     </div>
 
                     <div className="grid gap-2">
@@ -89,10 +95,6 @@ export default function Login({ status, canResetPassword }) {
             </form>
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
-            <div className="mt-4 text-center">
-                <span className="text-gray-600 dark:text-gray-300">Don't have an account? </span>
-                <Link href={route('register')} className="text-blue-600 hover:underline font-semibold">Sign up</Link>
-            </div>
         </AuthLayout>
     );
 }

@@ -1,14 +1,25 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
+import InputError from '@/components/input-error';
+import { LoaderCircle } from 'lucide-react';
 
 export default function RegisterMinibus() {
+    const { data, setData, post, processing, errors } = useForm({
+        number_plate: '',
+        assigned_route: '',
+    });
 
     const handleChange = (e) => {
-        const { id, value, type, files } = e.target;
-        setData(id, type === 'file' ? files[0] : value);
+        const { id, value } = e.target;
+        setData(id, value);
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+        post(route('create-user'));
     };
 
     return (
@@ -28,61 +39,55 @@ export default function RegisterMinibus() {
                         </div>
                     </div>
                     <h1 className='font-bold text-center text-gray-500'>Register Your Minibus Details</h1>
-                    <form className="flex flex-col gap-6 border-1 p-5 rounded-md bg-gray-500">
+                    <form onSubmit={submit} className="flex flex-col gap-6 border-1 p-5 rounded-md bg-gray-500">
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="numberPlate" className="text-white">Number Plate</Label>
+                            <Label htmlFor="number_plate" className="text-white">Number Plate</Label>
                             <Input
-                                id="numberPlate"
+                                id="number_plate"
                                 type="text"
-                                required
                                 autoFocus
-                                tabIndex={5}
-                                autoComplete="numberPlate"
+                                autoComplete="number_plate"
                                 placeholder="eg. DZ 4536"
                                 className='placeholder:text-gray-400 text-gray-300'
+                                value={data.number_plate}
                                 onChange={handleChange}
+                                disabled={processing}
                             />
+                            <InputError message={errors.number_plate} className="bg-white" />
                         </div>
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="assignedRoute" className="text-white">Assigned route</Label>
+                            <Label htmlFor="assigned_route" className="text-white">Assigned route</Label>
                             <Input
-                                id="assignedRoute"
+                                id="assigned_route"
                                 type="text"
-                                required
                                 autoFocus
-                                tabIndex={5}
-                                autoComplete="assignedRoute"
+                                autoComplete="assigned_route"
                                 placeholder="eg. Mzomba-to-Blantyre"
                                 className='placeholder:text-gray-400 text-gray-300'
+                                value={data.assigned_route}
                                 onChange={handleChange}
+                                disabled={processing}
                             />
+                            <InputError message={errors.assigned_route} className="bg-white" />
                         </div>
                         <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="ownershipProof" className="text-white">Proof of ownership</Label>
+                            <Label htmlFor="ownership_proof" className="text-white">Proof of ownership</Label>
                             <Input
-                                id="ownershipProof"
+                                id="ownership_proof"
                                 type="file"
-                                required
+                                accept="image/*"
                                 autoFocus
-                                tabIndex={5}
-                                autoComplete="ownershipProof"
                                 className='file:text-gray-400'
                                 onChange={handleChange}
+                                disabled={processing}
                             />
+                            <InputError message={errors.ownership_proof} className="bg-white" />
                         </div>
                         <div className="flex gap-2 items-center justify-between bg-gray-400 p-1 rounded-md">
-                            <Link
-                                href={route('registerOwner')}
-                                className="w-[25%] h-9 rounded-sm px-5 py-1.5 text-[darkslateblue] bg-gray-200 hover:bg-gray-300 cursor-pointer text-center"
-                            >
-                                Back
-                            </Link>
-                            <Link
-                                href={route('reviewRegInfor')}
-                                className="w-[25%] h-9 rounded-sm px-5 py-1.5 text-[darkslateblue] bg-blue-200 hover:bg-blue-300 cursor-pointer text-center"
-                            >
-                                Next
-                            </Link>
+                            <Button type="submit" className="flex-1 bg-blue-400 hover:bg-blue-500" disabled={processing}>
+                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                {processing ? 'Registering...' : 'Register'}
+                            </Button>
                         </div>
                     </form>
                 </div>

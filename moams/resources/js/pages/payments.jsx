@@ -39,10 +39,6 @@ export default function Payments() {
                             <ul className="text-left space-y-3 text-gray-600 dark:text-gray-400">
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                    Membership fee collection and tracking
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-blue-600 mr-2">•</span>
                                     Multiple payment methods (Cash, Mobile Money, Bank Transfer)
                                 </li>
                                 <li className="flex items-start">

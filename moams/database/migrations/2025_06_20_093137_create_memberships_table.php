@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('memberships', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('minibus_owner_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['pending', 'active', 'expired'])->default('pending');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['unregistered', 'registered', 'expired'])->default('unregistered');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->timestamps();

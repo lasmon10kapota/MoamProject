@@ -29,7 +29,19 @@ class MinibusController extends Controller
      */
     public function store(StoreMinibusRequest $request)
     {
-        //
+        $user = auth()->user();
+        $path = null;
+        if ($request->hasFile('ownership_proof')) {
+            $path = $request->file('ownership_proof')->store('OwnershipProofUploads', 'public');
+        }
+        $minibus = $user->minibuses()->create([
+            'number_plate' => $request->number_plate,
+            'assigned_route' => $request->assigned_route,
+            'proof_of_ownership' => $path,
+        ]);
+        $user->registration_step = 'makePayment';
+        $user->save();
+        return to_route('makePayment')->with('message', 'Minibus details saved successfully');
     }
 
     /**

@@ -35,20 +35,20 @@ class AuthenticatedSessionController extends Controller
 
         // Redirect based on user role
         $user = Auth::user();
-        
+
         // Debug: Log user roles
         \Log::info('User logged in:', [
             'user_id' => $user->id,
             'email' => $user->email,
             'roles' => $user->getRoleNames()->toArray(),
-            'has_registering_member' => $user->hasRole('registering member')
+            'has_minibus_owner' => $user->hasRole('minibus owner')
         ]);
-        
-        if ($user->hasRole('registering member')) {
+
+        if ($user->hasRole('minibus owner')) {
             \Log::info('Redirecting to registerOwner');
             return redirect()->intended(route('memberReg.registerOwner', absolute: false));
         }
-        
+
         \Log::info('Redirecting to dashboard');
         return redirect()->intended(route('dashboard', absolute: false));
     }

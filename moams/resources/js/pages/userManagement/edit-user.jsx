@@ -7,17 +7,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import FlashMessage from '@/components/ui/flash-message';
 
 export default function EditUser() {
     const { user, roles, flash } = usePage().props;
 
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, patch, processing, errors } = useForm({
         first_name: user.first_name,
         last_name: user.last_name,
         gender: user.gender,
         email: user.email,
         phone_number: user.phone_number,
         role: user.roles.length > 0 ? user.roles[0].name : '',
+
+        district: user.district || '',
+        village: user.village || '',
     });
 
     const breadcrumbs = [
@@ -52,9 +56,11 @@ export default function EditUser() {
         setData('role', value);
     };
 
+
+
     const submit = (e) => {
         e.preventDefault();
-        put(`/admin/users/${user.id}`);
+        patch(`/admin/users/${user.id}`);
     };
 
     return (
@@ -80,11 +86,7 @@ export default function EditUser() {
                 </div>
 
                 {/* Flash Messages */}
-                {flash.message && (
-                    <div className="mb-6 p-4 rounded-lg bg-green-100 border border-green-400 text-green-800">
-                        {flash.message}
-                    </div>
-                )}
+                {flash.message && <FlashMessage message={flash.message} type="success" />}
 
                 <div className="max-w-2xl">
                     <form className="space-y-6" onSubmit={submit}>
@@ -114,7 +116,6 @@ export default function EditUser() {
                                 <InputError message={errors.last_name} className="mt-2" />
                             </div>
                         </div>
-
                         <div>
                             <Label htmlFor="gender">Gender</Label>
                             <Select
@@ -135,6 +136,36 @@ export default function EditUser() {
                             <InputError message={errors.gender} className="mt-2" />
                         </div>
 
+                        {/* District */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="district" className="text-gray-700">District</Label>
+                            <Input
+                                id="district"
+                                className="mt-1 block w-full"
+                                value={data.district}
+                                onChange={handleChange}
+                                required
+                                autoComplete="district"
+                                placeholder="District"
+                                disabled={processing}
+                            />
+                            <InputError className="mt-2" message={errors.district} />
+                        </div>
+                        {/* Village */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="village" className="text-gray-700">Village/Town</Label>
+                            <Input
+                                id="village"
+                                className="mt-1 block w-full"
+                                value={data.village}
+                                onChange={handleChange}
+                                required
+                                autoComplete="village"
+                                placeholder="Village/Town"
+                                disabled={processing}
+                            />
+                            <InputError className="mt-2" message={errors.village} />
+                        </div>
                         <div>
                             <Label htmlFor="email">Email address</Label>
                             <Input
@@ -147,7 +178,6 @@ export default function EditUser() {
                             />
                             <InputError message={errors.email} className="mt-2" />
                         </div>
-
                         <div>
                             <Label htmlFor="phone_number">Phone number</Label>
                             <Input
@@ -160,7 +190,6 @@ export default function EditUser() {
                             />
                             <InputError message={errors.phone_number} className="mt-2" />
                         </div>
-
                         <div>
                             <Label htmlFor="role">Role</Label>
                             <Select
