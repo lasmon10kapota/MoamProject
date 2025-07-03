@@ -35,12 +35,10 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'John',
                 'last_name' => 'Mike',
                 'gender' => 'Male',
-
                 'district' => 'Ntcheu',
                 'village' => 'Muwalo',
-                // or 'female', or whatever is valid in your app
                 'phone_number' => '0934567890',
-                'password' => bcrypt('asdfghjkl'), // Change this to a strong password!
+                'password' => bcrypt('asdfghjkl'),
             ]
         );
 
@@ -57,25 +55,104 @@ class DatabaseSeeder extends Seeder
         echo "All roles created: " . implode(', ', $roles) . "\n";
 
         // Create sample users for each role
-        $minibusOwner = User::factory()->create([
-            'email' => 'minibusowner@example.com',
-            'commitment' => 'I commit to abide by the Constitution, rules, and regulations of the Minibus Owners Association of Malawi (MOAM), and to uphold the values and objectives of the Association at all times.'
-        ]);
-        $minibusOwner->assignRole('minibus owner');
+        $minibusOwners = [
+            [
+                'first_name' => 'James',
+                'last_name' => 'Banda',
+                'email' => 'james.banda@example.com',
+                'gender' => 'Male',
+                'district' => 'Lilongwe',
+                'village' => 'Area 25',
+                'phone_number' => '0991234567',
+            ],
+            [
+                'first_name' => 'Mary',
+                'last_name' => 'Phiri',
+                'email' => 'mary.phiri@example.com',
+                'gender' => 'Female',
+                'district' => 'Blantyre',
+                'village' => 'Namiwawa',
+                'phone_number' => '0881234567',
+            ],
+            [
+                'first_name' => 'John',
+                'last_name' => 'Chirwa',
+                'email' => 'john.chirwa@example.com',
+                'gender' => 'Male',
+                'district' => 'Zomba',
+                'village' => 'Matawale',
+                'phone_number' => '0991234568',
+            ],
+            [
+                'first_name' => 'Grace',
+                'last_name' => 'Mbewe',
+                'email' => 'grace.mbewe@example.com',
+                'gender' => 'Female',
+                'district' => 'Mzuzu',
+                'village' => 'Chibavi',
+                'phone_number' => '0881234568',
+            ],
+            [
+                'first_name' => 'Peter',
+                'last_name' => 'Gondwe',
+                'email' => 'peter.gondwe@example.com',
+                'gender' => 'Male',
+                'district' => 'Kasungu',
+                'village' => 'Chipata',
+                'phone_number' => '0991234569',
+            ],
+        ];
 
-        $clerk = User::factory()->create([
-            'email' => 'clerk@example.com',
-        ]);
+        foreach ($minibusOwners as $ownerData) {
+            $owner = User::updateOrCreate(
+                ['email' => $ownerData['email']],
+                array_merge($ownerData, [
+                    'password' => bcrypt('password123'),
+                    'commitment' => 'I commit to abide by the Constitution, rules, and regulations of the Minibus Owners Association of Malawi (MOAM), and to uphold the values and objectives of the Association at all times.'
+                ])
+            );
+            $owner->assignRole('minibus owner');
+        }
+
+        // Create association clerk
+        $clerk = User::updateOrCreate(
+            ['email' => 'clerk@example.com'],
+            [
+                'first_name' => 'Sarah',
+                'last_name' => 'Nyasulu',
+                'gender' => 'Female',
+                'district' => 'Lilongwe',
+                'village' => 'Area 47',
+                'phone_number' => '0881234570',
+                'password' => bcrypt('password123'),
+            ]
+        );
         $clerk->assignRole('association clerk');
 
-        $manager = User::factory()->create([
-            'email' => 'manager@example.com',
-        ]);
+        // Create association manager
+        $manager = User::updateOrCreate(
+            ['email' => 'manager@example.com'],
+            [
+                'first_name' => 'David',
+                'last_name' => 'Kaunda',
+                'gender' => 'Male',
+                'district' => 'Lilongwe',
+                'village' => 'Area 3',
+                'phone_number' => '0991234570',
+                'password' => bcrypt('password123'),
+            ]
+        );
         $manager->assignRole('association manager');
 
         /* User::factory()->create([
              'name' => 'Test User',
              'email' => 'test@example.com',
          ]);*/
+
+        // Call other seeders
+        $this->call([
+            MinibusSeeder::class,
+            MinibusOwnershipHistorySeeder::class,
+        ]);
     }
 }

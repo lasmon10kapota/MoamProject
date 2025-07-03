@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Minibus extends Model
@@ -14,11 +15,35 @@ class Minibus extends Model
     protected $fillable = [
         'number_plate',
         'assigned_route',
-        'proof_of_ownership',
+        'user_id',
+        'archived'
     ];
 
-    public function minibusOwner(): BelongsTo
+    protected $casts = [
+        'archived' => 'boolean'
+    ];
+
+    /**
+     * The user who owns the minibus (should have the 'minibus_owner' role)
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * The ownership history for this minibus
+     */
+    public function ownershipHistory(): HasMany
+    {
+        return $this->hasMany(MinibusOwnershipHistory::class);
+    }
+
+    /**
+     * The offenses associated with this minibus
+     */
+    // public function offenses(): HasMany
+    // {
+    //     return $this->hasMany(Offense::class);
+    // }
 }

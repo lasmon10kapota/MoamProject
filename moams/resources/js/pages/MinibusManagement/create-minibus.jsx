@@ -1,16 +1,25 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import React, { useState } from 'react';
+import { Head, useForm, Link } from '@inertiajs/react';
+import { LoaderCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from "@/components/ui/progress";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
+import FlashMessage from '@/components/ui/flash-message';
 import InputError from '@/components/input-error';
-import { LoaderCircle } from 'lucide-react';
 
-export default function RegisterMinibus() {
-    const { data, setData, post, processing, errors } = useForm({
+export default function CreateMinibus({ owners = [], flash, userRole }) {
+    const { data, setData, post, processing, errors, reset } = useForm({
         number_plate: '',
         assigned_route: '',
+        owner_id: '',
     });
+
+    const breadcrumbs = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Minibus Management', href: '/minibuses' },
+        { title: 'Add Minibus', href: '/minibuses/create' },
+    ];
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -19,80 +28,99 @@ export default function RegisterMinibus() {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('create-user'));
+        post(route('minibuses.store'), {
+            onFinish: () => reset('number_plate', 'assigned_route', 'owner_id'),
+        });
     };
 
     return (
-        <>
-            <Head title="Tryit">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-            </Head>
-            <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-                <div className="flex w-full max-w-xl flex-col gap-6 rounded-md">
-                    <div className="flex gap-2 items-center p-1">
-                        <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-sm">
-                            <img src='/assets/logos/MoamLogo.png' alt='App-logo' className='size-7 rounded-sm fill-current' />
-                        </div>
-                        <div className='bg-gray w-full border rounded-md p-4'>
-                            <Progress value={50} />
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Add Minibus" />
+            {flash && flash.message && <FlashMessage message={flash.message} type="success" />}
+            <div className="p-8">
+                {/* Header */}
+                <div className='flex justify-between items-center mb-8'>
+                    <div className="flex items-center space-x-4">
+                        <Link href="/minibuses">
+                            <Button variant="outline" size="sm">
+                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                Back to Minibuses
+                            </Button>
+                        </Link>
+                        <div>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">
+                                Register a new minibus for the association member
+                            </p>
                         </div>
                     </div>
-                    <h1 className='font-bold text-center text-gray-500'>Register Your Minibus Details</h1>
-                    <form onSubmit={submit} className="flex flex-col gap-6 border-1 p-5 rounded-md bg-gray-500">
-                        <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="number_plate" className="text-white">Number Plate</Label>
+                </div>
+                <div className="max-w-2xl">
+                    <form className="space-y-6" onSubmit={submit}>
+                        <div>
+                            <Label htmlFor="number_plate">Number Plate</Label>
                             <Input
                                 id="number_plate"
                                 type="text"
                                 autoFocus
                                 autoComplete="number_plate"
-                                placeholder="eg. DZ 4536"
-                                className='placeholder:text-gray-400 text-gray-300'
                                 value={data.number_plate}
                                 onChange={handleChange}
                                 disabled={processing}
+                                placeholder="e.g. DZ 4536"
                             />
-                            <InputError message={errors.number_plate} className="bg-white" />
+                            <InputError message={errors.number_plate} className="mt-1" />
                         </div>
-                        <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="assigned_route" className="text-white">Assigned route</Label>
+                        <div>
+                            <Label htmlFor="assigned_route">Assigned Route</Label>
                             <Input
                                 id="assigned_route"
                                 type="text"
-                                autoFocus
                                 autoComplete="assigned_route"
-                                placeholder="eg. Mzomba-to-Blantyre"
-                                className='placeholder:text-gray-400 text-gray-300'
                                 value={data.assigned_route}
                                 onChange={handleChange}
                                 disabled={processing}
+                                placeholder="e.g. Mzomba-to-Blantyre"
                             />
-                            <InputError message={errors.assigned_route} className="bg-white" />
+                            <InputError message={errors.assigned_route} className="mt-1" />
                         </div>
-                        <div className="grid auto-rows-min gap-2 md:grid-cols-2">
-                            <Label htmlFor="ownership_proof" className="text-white">Proof of ownership</Label>
-                            <Input
-                                id="ownership_proof"
-                                type="file"
-                                accept="image/*"
-                                autoFocus
-                                className='file:text-gray-400'
-                                onChange={handleChange}
+                        {userRole === 'association clerk' && (
+                            <div>
+                                <Label htmlFor="owner_id">Minibus Owner</Label>
+                                <select
+                                    id="owner_id"
+                                    value={data.owner_id}
+                                    onChange={handleChange}
+                                    disabled={processing}
+                                    className="border rounded px-2 py-1 w-full"
+                                >
+
+                                    <option value="">Select Owner</option>
+                                    {owners.map(owner => (
+                                        <option key={owner.id} value={owner.id}>{owner.first_name} {owner.last_name}</option>
+                                    ))}
+                                </select>
+                                <InputError message={errors.owner_id} className="mt-1" />
+                            </div>
+                        )}
+
+                        <div className="flex space-x-4 pt-6">
+                            <Button
+                                type="submit"
+                                className="bg-blue-600 hover:bg-blue-700"
                                 disabled={processing}
-                            />
-                            <InputError message={errors.ownership_proof} className="bg-white" />
-                        </div>
-                        <div className="flex gap-2 items-center justify-between bg-gray-400 p-1 rounded-md">
-                            <Button type="submit" className="flex-1 bg-blue-400 hover:bg-blue-500" disabled={processing}>
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                {processing ? 'Registering...' : 'Register'}
+                            >
+                                {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                                Add minibus
                             </Button>
+                            <Link href="/minibuses">
+                                <Button type="button" variant="outline">
+                                    Cancel
+                                </Button>
+                            </Link>
                         </div>
                     </form>
                 </div>
             </div>
-
-        </>
-    )
+        </AppLayout>
+    );
 }

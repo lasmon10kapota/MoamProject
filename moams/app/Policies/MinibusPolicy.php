@@ -37,7 +37,7 @@ class MinibusPolicy
      */
     public function update(User $user, Minibus $minibus): bool
     {
-        return false;
+        return $user->hasRole('association clerk');
     }
 
     /**
@@ -45,7 +45,7 @@ class MinibusPolicy
      */
     public function delete(User $user, Minibus $minibus): bool
     {
-        return false;
+        return $user->hasRole('association clerk');
     }
 
     /**
@@ -62,5 +62,15 @@ class MinibusPolicy
     public function forceDelete(User $user, Minibus $minibus): bool
     {
         return false;
+    }
+
+    public function archive(User $user, Minibus $minibus)
+    {
+        return $user->hasRole('association clerk');
+    }
+
+    public function unarchive(User $user, Minibus $minibus)
+    {
+        return $user->hasRole('association clerk');
     }
 }

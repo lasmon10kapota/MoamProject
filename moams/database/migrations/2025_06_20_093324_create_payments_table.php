@@ -12,9 +12,10 @@ return new class extends Migration {
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            // $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Deprecated: now linked via membership
+            $table->foreignId('membership_id')->constrained('memberships')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
-            $table->string('purpose'); // Registration, affiliation, Fine
+            $table->string('type'); // Registration, affiliation, Fine
             $table->string('method'); // Mobile money, Bank transfer, Cash
             $table->date('payment_date');
             $table->timestamps();

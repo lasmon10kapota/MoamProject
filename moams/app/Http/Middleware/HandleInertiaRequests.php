@@ -37,20 +37,20 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $user = $request->user();
+        $roles = $user ? $user->getRoleNames()->toArray() : [];
 
-        return [
-            ...parent::share($request),
-            'name' => config('app.name'),
-            'flash' => ['message' => fn() => $request->session()->get('message'),
-            'flashId' => fn() => fn() => $request->session()->get('flashId')],
+        return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'roles' => $roles,
+                ] : null,
             ],
-            'ziggy' => fn(): array => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
-            ],
-        ];
+            'userRoles' => $roles,
+        ]);
     }
 }

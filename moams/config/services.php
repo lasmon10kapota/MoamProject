@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'paychangu' => [
+        'public_key' => env('PAYCHANGU_PUBLIC_KEY'),
+        'private_key' => env('PAYCHANGU_PRIVATE_KEY'),
+    ],
+
 ];

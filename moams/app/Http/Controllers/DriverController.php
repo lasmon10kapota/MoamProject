@@ -41,8 +41,6 @@ class DriverController extends Controller
             'district' => $request->district,
             'driver_license' => $path,
         ]);
-        $user->registration_step = 'review';
-        $user->save();
         return to_route('reviewRegInfor')->with('message', 'Driver details saved successfully');
     }
 

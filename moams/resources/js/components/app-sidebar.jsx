@@ -3,7 +3,7 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
-import { BookUser, Waves, MessageCircleQuestion, House, CreditCard, Shield, Users } from 'lucide-react';
+import { BookUser, Waves, MessageCircleQuestion, House, CreditCard, Shield, Users, Bus } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems = [
@@ -31,6 +31,12 @@ const mainNavItems = [
         title: 'Offenses',
         url: '/offenses',
         icon: Waves,
+    },
+    {
+        title: 'Minibus Management',
+        url: '/minibuses',
+        icon: Bus,
+        role: ['association clerk', 'minibus owner'],
     },
     {
         title: 'User Management',
@@ -68,6 +74,9 @@ export function AppSidebar() {
     // Filter nav items based on user role
     const filteredNavItems = mainNavItems.filter(item => {
         if (item.role) {
+            if (Array.isArray(item.role)) {
+                return item.role.some(r => roles.includes(r));
+            }
             return roles.includes(item.role);
         }
         return true;

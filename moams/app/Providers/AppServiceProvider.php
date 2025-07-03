@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
                 if (!$user) {
                     return ['user' => null];
                 }
-                
+
                 try {
                     $roles = $user->roles()->pluck('name')->toArray();
                     \Log::info('User roles loaded:', ['user_id' => $user->id, 'roles' => $roles]);
@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
                     $roles = [];
                     \Log::error('Error loading user roles:', ['user_id' => $user->id, 'error' => $e->getMessage()]);
                 }
-                
+
                 return [
                     'user' => [
                         'id' => $user->id,
@@ -44,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
                         'roles' => $roles,
                     ],
                 ];
+            },
+            'userRoles' => function () {
+                $user = auth()->user();
+                return $user ? $user->roles()->pluck('name')->toArray() : [];
             },
         ]);
     }

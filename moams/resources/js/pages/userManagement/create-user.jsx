@@ -73,7 +73,7 @@ export default function AddUser() {
 
     const submit = (e) => {
         e.preventDefault();
-        if (!data.commitment) {
+        if (data.role === 'minibus owner' && !data.commitment) {
             setShowCommitmentError(true);
             return;
         }

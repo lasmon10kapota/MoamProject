@@ -33,23 +33,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirect based on user role
-        $user = Auth::user();
-
-        // Debug: Log user roles
-        \Log::info('User logged in:', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'roles' => $user->getRoleNames()->toArray(),
-            'has_minibus_owner' => $user->hasRole('minibus owner')
-        ]);
-
-        if ($user->hasRole('minibus owner')) {
-            \Log::info('Redirecting to registerOwner');
-            return redirect()->intended(route('memberReg.registerOwner', absolute: false));
-        }
-
-        \Log::info('Redirecting to dashboard');
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

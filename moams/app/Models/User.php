@@ -61,6 +61,9 @@ class User extends Authenticatable
         return $this->hasMany(Complaint::class);
     }
 
+    /**
+     * Get all minibuses owned by this user (user should have the 'minibus_owner' role)
+     */
     public function minibuses(): HasMany
     {
         return $this->hasMany(Minibus::class);

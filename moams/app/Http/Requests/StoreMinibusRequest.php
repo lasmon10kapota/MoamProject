@@ -21,9 +21,22 @@ class StoreMinibusRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'number_plate' => 'required|string|max:20',
+        $rules = [
+            'number_plate' => 'required|string|max:20|unique:minibuses,number_plate',
             'assigned_route' => 'required|string|max:255',
         ];
+        if (auth()->user() && auth()->user()->hasRole('association clerk')) {
+            $rules['owner_id'] = [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) {
+                    $user = \App\Models\User::find($value);
+                    if (!$user || !$user->hasRole('minibus owner')) {
+                        $fail('Selected owner must have the minibus owner role.');
+                    }
+                }
+            ];
+        }
+        return $rules;
     }
 }

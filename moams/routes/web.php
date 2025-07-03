@@ -68,7 +68,7 @@ Route::middleware(['auth', 'verified', 'role:system admin'])->group(function () 
     Route::post('/users/{user}/roles', [UserRoleController::class, 'update']);
 });
 
-require __DIR__ . '/memberReg.php';
+require __DIR__ . '/userManag.php';
+require __DIR__ . '/minibusManag.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
-require __DIR__ . '/userManag.php';
